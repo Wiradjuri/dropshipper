@@ -6,3 +6,4 @@ pydantic==2.11.8
 python-dotenv==1.0.1
 stripe==10.7.0
 APScheduler==3.10.4
+asyncpg==0.29.0

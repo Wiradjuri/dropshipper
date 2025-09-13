@@ -16,7 +16,14 @@ function Run($cmd) {
   powershell -NoLogo -NoProfile -Command $cmd
 }
 
-# 0) Tooling (optional Trunk)
+
+# 0) Preflight: Check NEXT_PUBLIC_API_BASE_URL in frontend/.env.example
+$envPath = "frontend/.env.example"
+if (-not (Test-Path $envPath)) { Write-Error ".env.example missing in frontend"; exit 1 }
+$apiBase = (Get-Content $envPath | Select-String 'NEXT_PUBLIC_API_BASE_URL' | ForEach-Object { $_.ToString().Split('=')[1].Trim() })
+if (-not $apiBase) { Write-Error "NEXT_PUBLIC_API_BASE_URL missing in .env.example"; exit 1 }
+
+# Tooling (optional Trunk)
 if (Test-Path ".trunk\trunk.yaml") {
   Step "Trunk install tools" { Run "trunk tools install" }
 }
@@ -39,12 +46,12 @@ Step "Backend import check" {
 Step "Frontend deps" {
   Run "cd frontend; npm install"
 }
-# Prefer build to catch type errors; fall back to dev if build not configured
+# Prefer build to catch type errors; fail if build fails
 try {
   Step "Frontend build" { Run "cd frontend; npm run build" }
 }
 catch {
-  Step "Frontend dev (sanity)" { Run "cd frontend; npm run dev" }
+  Write-Error 'Frontend build failed'; exit 1
 }
 
 # 3) Linters (Trunk, if present)
