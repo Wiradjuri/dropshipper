@@ -1,12 +1,13 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from app.products.router import router as products_router
-from app.orders.router import router as orders_router
 from app.checkout.router import router as checkout_router
+from app.config import settings
+from app.integrations.mock_supplier import poll_tracking_async
+from app.orders.router import router as orders_router
+from app.products.router import router as products_router
 from app.webhooks.router import router as webhooks_router
 from apscheduler.schedulers.background import BackgroundScheduler
-from app.integrations.mock_supplier import poll_tracking_async
-from app.config import settings
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
 
 def schedule_tracking_poll(order_id: int):
     # schedule a poll in 10 seconds

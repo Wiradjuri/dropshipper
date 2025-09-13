@@ -1,9 +1,11 @@
-from fastapi import APIRouter, HTTPException, Depends, Request
-from sqlalchemy.orm import Session
+from typing import Any, Dict, List
+
+import stripe
 from app.db.session import SessionLocal
 from app.orders.models import Order
 from app.settings import settings
-import stripe
+from fastapi import APIRouter, Depends, HTTPException, Request
+from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/checkout", tags=["checkout"])
 
@@ -30,7 +32,7 @@ async def create_checkout_session(order_id: int, request: Request, db: Session =
         return {"checkout_url": f"/fake-checkout?order_id={order.id}"}
 
     stripe.api_key = settings.STRIPE_SECRET_KEY
-    line_items = [
+    line_items: List[Dict[str, Any]] = [
         {
             "price_data": {
                 "currency": order.currency,
@@ -41,9 +43,9 @@ async def create_checkout_session(order_id: int, request: Request, db: Session =
         }
         for it in order.items
     ]
-    session = stripe.checkout.Session.create(
+    session = stripe.checkout.Session.create(  # type: ignore[arg-type]
         mode="payment",
-        line_items=line_items,
+        line_items=line_items,  # type: ignore[arg-type]
         success_url=success_url,
         cancel_url=cancel_url,
         metadata={"order_id": str(order.id)},

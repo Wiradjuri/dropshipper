@@ -1,5 +1,6 @@
 from typing import Protocol
 
+
 class Supplier(Protocol):
     def place_order(self, order_id: int) -> str: ...
     def get_tracking(self, supplier_order_id: str) -> str | None: ...

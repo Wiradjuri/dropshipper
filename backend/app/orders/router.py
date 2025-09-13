@@ -1,8 +1,8 @@
-from fastapi import APIRouter, HTTPException
-from sqlalchemy.orm import Session
-from fastapi import Depends
 from app.db.session import SessionLocal
 from app.products.models import Product
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+
 from .models import Order, OrderItem
 from .schemas import OrderCreate, OrderOut
 
@@ -37,21 +37,21 @@ async def create_order(payload: OrderCreate, db: Session = Depends(get_db)):
             currency = product.currency
         elif currency != product.currency:
             raise HTTPException(status_code=400, detail="Mixed currency not supported")
-        line_subtotal = product.price_cents * item.quantity
+        line_subtotal = int(product.price_cents) * int(item.quantity)
         subtotal += line_subtotal
         db.add(OrderItem(
             order_id=order.id,
             product_id=product.id,
-            name=product.name,
-            sku=product.sku,
-            price_cents=product.price_cents,
+            name=str(product.name),
+            sku=str(product.sku),
+            price_cents=int(product.price_cents),
             quantity=item.quantity,
         ))
 
     total = int(subtotal * (1 + TAX_RATE))
-    order.subtotal_cents = subtotal
-    order.total_cents = total
-    order.currency = currency or "USD"
+    order.subtotal_cents = int(subtotal)  # type: ignore[assignment]
+    order.total_cents = int(total)  # type: ignore[assignment]
+    order.currency = str(currency or "USD")  # type: ignore[assignment]
     db.commit()
     db.refresh(order)
     return order

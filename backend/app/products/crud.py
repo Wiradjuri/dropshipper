@@ -1,7 +1,9 @@
-from sqlalchemy.orm import Session
 from sqlalchemy import select
+from sqlalchemy.orm import Session
+
 from .models import Product
 from .schemas import ProductCreate, ProductUpdate
+
 
 async def list_products(db: Session):
     return db.execute(select(Product)).scalars().all()
@@ -10,7 +12,7 @@ async def get_product(db: Session, product_id: int):
     return db.get(Product, product_id)
 
 async def create_product(db: Session, data: ProductCreate):
-    p = Product(**data.model_dict())
+    p = Product(**data.model_dump())
     db.add(p)
     db.commit()
     db.refresh(p)

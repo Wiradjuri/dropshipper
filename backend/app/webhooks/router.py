@@ -1,12 +1,13 @@
-from fastapi import APIRouter, Request, HTTPException, Depends
 import asyncio
-from sqlalchemy.orm import Session
+
+import stripe
 from app.db.session import SessionLocal
+from app.emails.service import send_receipt
+from app.integrations.mock_supplier import place_order_async, poll_tracking_async
 from app.orders.models import Order
 from app.settings import settings
-from app.integrations.mock_supplier import place_order_async, poll_tracking_async
-from app.emails.service import send_receipt
-import stripe
+from fastapi import APIRouter, Depends, HTTPException, Request
+from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/webhooks", tags=["webhooks"])
 
@@ -28,7 +29,8 @@ async def stripe_webhook(request: Request, db: Session = Depends(get_db)):
         sig_header = request.headers.get("Stripe-Signature")
         body = await request.body()
         try:
-            event = stripe.Webhook.construct_event(body=body, sig_header=sig_header, secret=settings.STRIPE_WEBHOOK_SECRET)
+            # stripe.Webhook.construct_event(payload, sig_header, secret)
+            event = stripe.Webhook.construct_event(body, sig_header, settings.STRIPE_WEBHOOK_SECRET)
         except Exception:
             raise HTTPException(status_code=400, detail="Invalid signature")
         event_type = event.get("type")
@@ -40,17 +42,17 @@ async def stripe_webhook(request: Request, db: Session = Depends(get_db)):
         if not order:
             raise HTTPException(status_code=404, detail="Order not found")
         if order.status != "paid":
-            order.status = "paid"
+            order.status = "paid"  # type: ignore[assignment]
             db.add(order)
             db.commit()
             # Trigger supplier placement
-            await place_order_async(order.id)
+            await place_order_async(int(order.id))
             # Send receipt (stub)
-            send_receipt(order.id)
+            send_receipt(int(order.id))
             # Schedule tracking update in ~5 seconds
             async def _delayed_tracking():
                 await asyncio.sleep(5)
-                await poll_tracking_async(order.id)
+                await poll_tracking_async(int(order.id))
             asyncio.create_task(_delayed_tracking())
         return {"received": True}
 

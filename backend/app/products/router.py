@@ -1,6 +1,7 @@
+from app.db.session import SessionLocal
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.db.session import SessionLocal
+
 from . import crud, schemas
 
 router = APIRouter(prefix="/products", tags=["products"])

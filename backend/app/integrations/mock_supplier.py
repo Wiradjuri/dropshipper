@@ -1,7 +1,9 @@
 import asyncio
-from sqlalchemy.orm import Session
+
 from app.db.session import SessionLocal
 from app.orders.models import Order
+from sqlalchemy.orm import Session
+
 
 async def place_order_async(order_id: int) -> None:
     # simulate async placement and later tracking availability
@@ -12,7 +14,7 @@ async def place_order_async(order_id: int) -> None:
         if not order:
             return
         if not order.supplier_order_id:
-            order.supplier_order_id = f"MOCK-{order.id}"
+            order.supplier_order_id = f"MOCK-{int(order.id)}"  # type: ignore[assignment]
             db.add(order)
             db.commit()
     finally:
@@ -25,8 +27,8 @@ async def poll_tracking_async(order_id: int) -> None:
         if not order:
             return
         # simulate tracking becoming available after some time
-        order.tracking_number = f"TRACK-{order.id}"
-        order.status = "fulfilled"
+        order.tracking_number = f"TRACK-{int(order.id)}"  # type: ignore[assignment]
+        order.status = "fulfilled"  # type: ignore[assignment]
         db.add(order)
         db.commit()
     finally:
