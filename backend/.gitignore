@@ -1,0 +1,16 @@
+# Backend-specific ignores (Python/FastAPI)
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.mypy_cache/
+.pytest_cache/
+.venv/
+venv/
+.env*
+# SQLite DB
+/dev.db
+# Alembic caches
+alembic/__pycache__/
+# VSCode
+.vscode/

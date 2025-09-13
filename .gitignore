@@ -1,0 +1,63 @@
+# Global ignores for the repo (frontend + backend)
+
+# Node/Yarn/PNPM
+node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+pnpm-lock.yaml
+
+# Next.js (scoped to frontend)
+frontend/.next/
+frontend/out/
+
+# Build outputs
+build/
+dist/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Env files
+.env*
+**/.env*
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# TypeScript
+*.tsbuildinfo
+frontend/next-env.d.ts
+
+# Python
+**/__pycache__/
+**/*.py[cod]
+**/*.pyo
+**/*.pyd
+*.coverage
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# SQLite dev DB
+backend/dev.db
+
+# Alembic cache
+backend/alembic/__pycache__/
+
+# Vercel
+.vercel/
+
+# Coverage
+coverage/

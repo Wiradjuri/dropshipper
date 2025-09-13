@@ -1,0 +1,27 @@
+### Create sample product
+POST http://localhost:8000/products
+Content-Type: application/json
+
+{
+  "name": "Test Widget",
+  "sku": "WIDGET-001",
+  "price_cents": 1299,
+  "currency": "USD",
+  "stock": 10
+}
+
+### List products
+GET http://localhost:8000/products
+
+### Create order (server recomputes totals)
+POST http://localhost:8000/orders
+Content-Type: application/json
+
+{
+  "items": [
+    { "product_id": 1, "quantity": 2 }
+  ]
+}
+
+### Get order
+GET http://localhost:8000/orders/1
