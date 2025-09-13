@@ -1,0 +1,22 @@
+packages:
+    - pip>=24.0
+    - npm>=10.8.1
+    - gradle>=8.7
+    - go-tools>=0.13.0
+    - dart-sdk>=3.7.2 - java-sdk>=17.0.10 - nodejs-sdk>=22.2.0 - python-sdk>=3.11.11 - golang-sdk>=1.22.3 - maven>=3.9.5 - openjdk>=17.0.10 - openjdk@17.0.10 - openjdk@17 - openjdk@17.0 - openjdk17
+runtimes:
+    - dart@3.7.2
+    - go@1.22.3
+    - java@17.0.10
+    - node@22.2.0
+    - python@3.1.12
+tools:
+    - dartanalyzer@3.7.2
+    - eslint@8.57.0
+    - lizard@1.17.31
+    - pmd@7.11.0
+    - pylint@3.3.6
+    - revive@1.7.0
+    - semgrep@1.78.0
+    - trivy@0.65.0
+version: 1
